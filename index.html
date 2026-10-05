@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Penjelajah Gunung Api - IPAS Kelas 5 SD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Inter & Fredoka -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Fredoka', 'cursive'],
+                    },
+                    colors: {
+                        volcano: {
+                            50: '#fff5f2',
+                            100: '#ffe6de',
+                            200: '#ffcfbd',
+                            300: '#ffa98e',
+                            400: '#ff7454',
+                            500: '#ff441f',
+                            600: '#e62a05',
+                            700: '#cc1e00',
+                            800: '#991b06',
+                            900: '#7a1b0c',
+                        },
+                        lava: '#ff5500',
+                        ash: '#5c5b5b',
+                        magma: '#d9381e'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            user-select: none;
+        }
+        .font-heading {
+            font-family: 'Fredoka', cursive;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .pulse-subtle {
+            animation: pulseSubtle 2s infinite ease-in-out;
+        }
+        @keyframes pulseSubtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .float-animation {
+            animation: float 3s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; }
+        }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between selection:bg-volcano-200">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-slate-900 text-white shadow-md border-b border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <!-- Logo & Title -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-volcano-600 flex items-center justify-center text-white text-xl shadow-lg font-bold">
+                    🌋
+                </div>
+                <div>
+                    <h1 class="font-heading text-lg sm:text-xl font-bold tracking-wide text-amber-400">Penjelajah Gunung Api</h1>
+                    <p class="text-xs text-slate-400 hidden sm:block">IPAS Kelas 5 SD - Fase C</p>
+                </div>
+            </div>
+
+            <!-- Stats Header & Audio Controls -->
+            <div class="flex items-center space-x-3 sm:space-x-6">
+                <!-- XP Badge -->
+                <div class="bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full flex items-center space-x-2">
+                    <span class="text-amber-400 text-lg">⭐</span>
+                    <span id="user-xp" class="font-bold text-amber-300 font-heading text-sm sm:text-base">0 XP</span>
+                </div>
+
+                <!-- Level Badge -->
+                <div class="hidden sm:flex bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full items-center space-x-2">
+                    <span class="text-emerald-400 text-base">🏅</span>
+                    <span id="badge-count" class="font-bold text-emerald-300 font-heading text-xs sm:text-sm">0 Badge</span>
+                </div>
+
+                <!-- Audio Toggles -->
+                <div class="flex items-center space-x-1 bg-slate-800 p-1 rounded-full border border-slate-700">
+                    <button id="btn-toggle-narration" onclick="toggleNarration()" class="p-2 rounded-full hover:bg-slate-700 text-amber-400 transition" title="Suara Narasi (ON/OFF)">
+                        <i id="icon-narration" class="fas me-1 fa-volume-high text-sm sm:text-base"></i>
+                    </button>
+                    <button id="btn-toggle-sfx" onclick="toggleSFX()" class="p-2 rounded-full hover:bg-slate-700 text-cyan-400 transition" title="Efek Suara (ON/OFF)">
+                        <i id="icon-sfx" class="fas fa-bell text-sm sm:text-base"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Progress Bar -->
+        <div class="w-full bg-slate-800 h-2">
+            <div id="global-progress" class="bg-gradient-to-r from-amber-500 via-volcano-500 to-red-600 h-2 transition-all duration-500" style="width: 0%"></div>
+        </div>
+    </header>
+
+    <!-- Main Outer Container -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow flex flex-col md:flex-row gap-6">
+        
+        <!-- Sidebar Navigation Menu (Desktop & Mobile Scrollable) -->
+        <aside class="w-full md:w-64 flex-shrink-0 no-print">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sticky top-20">
+                <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2 flex items-center justify-between">
+                    <span>Misi Petualangan</span>
+                    <span id="misi-percent" class="text-volcano-600 font-heading">0%</span>
+                </div>
+                
+                <nav class="space-y-1.5 font-medium text-sm text-slate-600 max-h-[70vh] overflow-y-auto pr-1">
+                    <button onclick="navigateTo('home')" id="nav-home" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left active-nav">
+                        <span class="text-lg">🏠</span>
+                        <span>1. Beranda</span>
+                    </button>
+                    <button onclick="navigateTo('tujuan')" id="nav-tujuan" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">🎯</span>
+                        <span>2. Misi & Tujuan</span>
+                    </button>
+                    <button onclick="navigateTo('materi')" id="nav-materi" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">📖</span>
+                        <span>3. Materi Ringkas</span>
+                    </button>
+                    <button onclick="navigateTo('eksplorasi')" id="nav-eksplorasi" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">🔍</span>
+                        <span>4. Eksplor Hotspot</span>
+                    </button>
+                    <button onclick="navigateTo('simulasi')" id="nav-simulasi" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">🧪</span>
+                        <span>5. Simulasi Erupsi</span>
+                    </button>
+                    <button onclick="navigateTo('minigame')" id="nav-minigame" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">🎮</span>
+                        <span>6. Mini Game</span>
+                    </button>
+                    <button onclick="navigateTo('lkpd')" id="nav-lkpd" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">📝</span>
+                        <span>7. LKPD Interaktif</span>
+                    </button>
+                    <button onclick="navigateTo('kuis')" id="nav-kuis" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">🧩</span>
+                        <span>8. Kuis Adaptif</span>
+                    </button>
+                    <button onclick="navigateTo('refleksi')" id="nav-refleksi" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">💡</span>
+                        <span>9. Refleksi Diri</span>
+                    </button>
+                    <button onclick="navigateTo('sertifikat')" id="nav-sertifikat" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition text-left">
+                        <span class="text-lg">🏆</span>
+                        <span>10. Badge & Hasil</span>
+                    </button>
+                </nav>
+
+                <!-- Help Helper Box -->
+                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-center space-x-3 text-amber-900 text-xs">
+                    <div class="text-2xl">🤖</div>
+                    <div>
+                        <span class="font-bold block">Kak Volcano Bot:</span>
+                        <span>Klik tombol audio di kanan atas jika ingin mendengar suara narasi!</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Active Display Window -->
+        <main class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-6 lg:p-8 min-h-[600px] relative overflow-hidden flex flex-col justify-between">
+            
+            <!-- Dynamic Content Display Sections -->
+            <div id="content-area" class="w-full">
+                
+                <!-- 1. HOME SCREEN -->
+                <section id="sec-home" class="view-section space-y-6">
+                    <div class="relative rounded-3xl overflow-hidden bg-gradient-to-r from-volcano-800 via-slate-900 to-amber-950 text-white p-6 sm:p-10 shadow-xl border border-volcano-700">
+                        <div class="absolute -right-10 -bottom-10 opacity-20 text-9xl pointer-events-none">🌋</div>
+                        <div class="max-w-2xl relative z-10 space-y-4">
+                            <span class="inline-block bg-volcano-600 text-amber-200 text-xs font-bold px-3 py-1 rounded-full tracking-wide uppercase">
+                                Modul IPAS Kelas 5 SD - Kebencanaan Alam
+                            </span>
+                            <h2 class="font-heading text-3xl sm:text-5xl font-extrabold leading-tight">
+                                Selamat Datang, Penjelajah Muda! 🌋
+                            </h2>
+                            <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                                Siapkah kamu menjelajahi rahasia perut bumi, memahami bagaimana gunung api meletus, serta menjadi pahlawan keselamatan bencana? Mari mulai petualangan serumu sekarang!
+                            </p>
+                            
+                            <!-- Student Input Name -->
+                            <div class="pt-4 space-y-2">
+                                <label class="block text-sm font-medium text-amber-300">Siapa Namamu, Penjelajah Hebat?</label>
+                                <div class="flex flex-col sm:flex-row gap-3">
+                                    <input type="text" id="input-student-name" placeholder="Tulis nama lengkapmu di sini..." 
+                                           class="px-4 py-3 rounded-xl bg-slate-800/90 text-white placeholder-slate-400 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400 flex-grow font-medium">
+                                    <button onclick="startAdventure()" class="px-6 py-3 bg-gradient-to-r from-amber-500 to-volcano-600 text-white font-bold font-heading text-lg rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition flex items-center justify-center space-x-2">
+                                        <span>Mulai Petualangan</span>
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Highlight Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4">
+                        <div class="p-5 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col justify-between">
+                            <div class="text-3xl mb-2">🔍</div>
+                            <h3 class="font-heading font-bold text-amber-900 text-lg">Hotspot Gunung Api</h3>
+                            <p class="text-xs text-amber-800 mt-1">Bedah bagian-bagian dalam gunung api secara visual dan interaktif.</p>
+                        </div>
+                        <div class="p-5 rounded-2xl bg-volcano-50 border border-volcano-200 flex flex-col justify-between">
+                            <div class="text-3xl mb-2">🧪</div>
+                            <h3 class="font-heading font-bold text-volcano-900 text-lg">Simulasi Erupsi</h3>
+                            <p class="text-xs text-volcano-800 mt-1">Atur tekanan gas dan kepekatannya untuk memicu erupsi virtual!</p>
+                        </div>
+                        <div class="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 flex flex-col justify-between">
+                            <div class="text-3xl mb-2">🏆</div>
+                            <h3 class="font-heading font-bold text-emerald-900 text-lg">Sertifikat Detektif</h3>
+                            <p class="text-xs text-emerald-800 mt-1">Kumpulkan XP, dapatkan 3 badge resmi, dan cetak sertifikatmu.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. TUJUAN PEMBELAJARAN SCREEN -->
+                <section id="sec-tujuan" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4">
+                        <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 2 dari 10</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">🎯 Misi & Tujuan Pembelajaran</h2>
+                        <p class="text-slate-600 text-sm">Target yang akan kamu capai dalam petualangan ini.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-5 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl font-bold flex-shrink-0 shadow">1</div>
+                            <div>
+                                <h3 class="font-heading font-bold text-slate-800 text-base">Mengenal Struktur Gunung Api</h3>
+                                <p class="text-slate-600 text-sm mt-1">Murid mampu menjelaskan bagian-bagian utama gunung api seperti dapur magma, pipa utama, kawah, dan lereng.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-gradient-to-br from-volcano-50 to-red-50 border border-volcano-200 flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-volcano-500 text-white flex items-center justify-center text-xl font-bold flex-shrink-0 shadow">2</div>
+                            <div>
+                                <h3 class="font-heading font-bold text-slate-800 text-base">Memahami Proses Erupsi & Material</h3>
+                                <p class="text-slate-600 text-sm mt-1">Murid dapat menjelaskan bagaimana magma naik, penyebab timbulnya tekanan gas, serta beda magma, lava, dan abu vulkanik.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-gradient-to-br from-blue-50 to-cyan-50 border border-blue-200 flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-500 text-white flex items-center justify-center text-xl font-bold flex-shrink-0 shadow">3</div>
+                            <div>
+                                <h3 class="font-heading font-bold text-slate-800 text-base">Menganalisis Dampak Erupsi</h3>
+                                <p class="text-slate-600 text-sm mt-1">Murid dapat membedakan dampak positif (tanah subur, bahan bangunan) dan dampak negatif (awan panas, bahaya debu).</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 flex items-start space-x-4">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center text-xl font-bold flex-shrink-0 shadow">4</div>
+                            <div>
+                                <h3 class="font-heading font-bold text-slate-800 text-base">Penyelamatan & Mitigasi Bencana</h3>
+                                <p class="text-slate-600 text-sm mt-1">Murid mampu mempraktikkan langkah siaga bencana, memahami status gunung api, dan menyiapkan Tas Siaga Bencana.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-900 text-white flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <span class="text-3xl">🧭</span>
+                            <div>
+                                <p class="font-heading font-bold text-amber-300">Siap Menghadapi Misi?</p>
+                                <p class="text-xs text-slate-300">Selesaikan setiap tahapan untuk mengumpulkan XP dan memenangkan Badge!</p>
+                            </div>
+                        </div>
+                        <button onclick="navigateTo('materi')" class="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold font-heading rounded-xl transition text-sm">
+                            Lanjut ke Materi ➔
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 3. MATERI INTERAKTIF SCREEN -->
+                <section id="sec-materi" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4 flex justify-between items-end">
+                        <div>
+                            <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 3 dari 10</span>
+                            <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">📖 Ringkasan Materi Interaktif</h2>
+                            <p class="text-slate-600 text-sm">Klik tab materi untuk mempelajari konsep penting gunung api.</p>
+                        </div>
+                        <button onclick="readCurrentMateriTab()" class="px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-xs font-bold flex items-center space-x-1 hover:bg-amber-200">
+                            <i class="fas fa-volume-high"></i>
+                            <span>Baca Materi Ini</span>
+                        </button>
+                    </div>
+
+                    <!-- Materi Tabs Navigation -->
+                    <div class="flex space-x-2 border-b border-slate-200 overflow-x-auto pb-2">
+                        <button onclick="switchMateriTab('tab-struktur')" id="btn-tab-struktur" class="materi-tab px-4 py-2 rounded-xl text-sm font-bold font-heading bg-volcano-600 text-white shadow">
+                            1. Struktur Gunung Api
+                        </button>
+                        <button onclick="switchMateriTab('tab-material')" id="btn-tab-material" class="materi-tab px-4 py-2 rounded-xl text-sm font-bold font-heading bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            2. Magma, Lava & Abu
+                        </button>
+                        <button onclick="switchMateriTab('tab-proses')" id="btn-tab-proses" class="materi-tab px-4 py-2 rounded-xl text-sm font-bold font-heading bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            3. Penyebab & Proses
+                        </button>
+                        <button onclick="switchMateriTab('tab-dampak')" id="btn-tab-dampak" class="materi-tab px-4 py-2 rounded-xl text-sm font-bold font-heading bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            4. Dampak Positif & Negatif
+                        </button>
+                        <button onclick="switchMateriTab('tab-mitigasi')" id="btn-tab-mitigasi" class="materi-tab px-4 py-2 rounded-xl text-sm font-bold font-heading bg-slate-100 text-slate-600 hover:bg-slate-200">
+                            5. Status & Mitigasi
+                        </button>
+                    </div>
+
+                    <!-- Tab Content Panels -->
+                    <div id="materi-content-area" class="min-h-[320px]">
+                        <!-- Tab 1: Struktur -->
+                        <div id="tab-struktur" class="tab-panel space-y-4">
+                            <div class="p-4 bg-volcano-50 rounded-2xl border border-volcano-200 flex flex-col md:flex-row gap-6 items-center">
+                                <div class="w-full md:w-1/2 text-center">
+                                    <div class="bg-white p-4 rounded-2xl shadow border border-slate-200">
+                                        <svg viewBox="0 0 400 300" class="w-full h-auto max-h-60 mx-auto">
+                                            <!-- Mountain Outline -->
+                                            <polygon points="50,260 200,60 350,260" fill="#78350f" />
+                                            <polygon points="170,100 200,60 230,100" fill="#f97316" />
+                                            <!-- Magma Chamber -->
+                                            <ellipse cx="200" cy="260" rx="60" ry="25" fill="#dc2626" />
+                                            <text x="200" y="265" text-anchor="middle" fill="white" font-weight="bold" font-size="12">Dapur Magma</text>
+                                            <!-- Vent / Conduit -->
+                                            <rect x="190" y="100" width="20" height="140" fill="#ef4444" />
+                                            <text x="200" y="170" text-anchor="middle" fill="white" font-weight="bold" font-size="10" transform="rotate(-90 200 170)">Pipa Utama</text>
+                                            <!-- Crater -->
+                                            <path d="M 180,80 Q 200,100 220,80" fill="none" stroke="#b91c1c" stroke-width="4" />
+                                            <text x="200" y="45" text-anchor="middle" fill="#991b1b" font-weight="bold" font-size="12">Kawah</text>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="w-full md:w-1/2 space-y-3">
+                                    <h3 class="font-heading font-bold text-volcano-800 text-lg">Bagian-Bagian Utama Gunung Api</h3>
+                                    <ul class="space-y-2 text-sm text-slate-700">
+                                        <li class="p-2 bg-white rounded-lg border border-slate-200"><strong class="text-volcano-600">1. Dapur Magma:</strong> Ruang raksasa di bawah bumi tempat berkumpulnya batuan cair yang sangat panas (magma).</li>
+                                        <li class="p-2 bg-white rounded-lg border border-slate-200"><strong class="text-volcano-600">2. Pipa Utama (Saluran):</strong> Saluran tempat terdorongnya magma naik menuju permukaan bumi.</li>
+                                        <li class="p-2 bg-white rounded-lg border border-slate-200"><strong class="text-volcano-600">3. Kawah (Crater):</strong> Lubang berbentuk mangkuk di puncak tempat keluarnya materi letusan.</li>
+                                        <li class="p-2 bg-white rounded-lg border border-slate-200"><strong class="text-volcano-600">4. Lereng & Kerucut:</strong> Dinding gunung yang terbentuk dari tumpukan lava dan abu beku secara bertahun-tahun.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: Material -->
+                        <div id="tab-material" class="tab-panel space-y-4 hidden">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div class="p-4 bg-red-50 rounded-2xl border border-red-200 space-y-2">
+                                    <div class="text-3xl text-center">🔥</div>
+                                    <h4 class="font-heading font-bold text-red-800 text-center">Magma</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">Batuan meleleh yang sangat panas yang masih berada <strong>di dalam perut bumi</strong>. Suhunya bisa mencapai lebih dari 1.000°C!</p>
+                                </div>
+                                <div class="p-4 bg-orange-50 rounded-2xl border border-orange-200 space-y-2">
+                                    <div class="text-3xl text-center">🌋</div>
+                                    <h4 class="font-heading font-bold text-orange-800 text-center">Lava</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">Magma yang <strong>sudah keluar dan mengalir</strong> di permukaan bumi saat erupsi. Saat membeku, lava menjadi batuan keras.</p>
+                                </div>
+                                <div class="p-4 bg-slate-100 rounded-2xl border border-slate-300 space-y-2">
+                                    <div class="text-3xl text-center">💨</div>
+                                    <h4 class="font-heading font-bold text-slate-800 text-center">Abu Vulkanik & Awan Panas</h4>
+                                    <p class="text-xs text-slate-600 leading-relaxed">Debu halus hasil semburan gas bertekanan tinggi. Awan panas (Wedhus Gembel) bergerak cepat dan sangat berbahaya!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 3: Proses -->
+                        <div id="tab-proses" class="tab-panel space-y-4 hidden">
+                            <div class="p-5 bg-amber-50 rounded-2xl border border-amber-200 space-y-3">
+                                <h3 class="font-heading font-bold text-amber-900 text-lg">Bagaimana Erupsi Bisa Terjadi?</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-center text-xs">
+                                    <div class="p-3 bg-white rounded-xl shadow-sm border border-amber-200">
+                                        <div class="text-2xl font-bold text-amber-600 mb-1">1</div>
+                                        <strong class="block text-slate-800 mb-1">Pencairan Batuan</strong>
+                                        <span>Panas bumi melelehkan batuan menjadi magma cair.</span>
+                                    </div>
+                                    <div class="p-3 bg-white rounded-xl shadow-sm border border-amber-200">
+                                        <div class="text-2xl font-bold text-amber-600 mb-1">2</div>
+                                        <strong class="block text-slate-800 mb-1">Tekanan Gas Naik</strong>
+                                        <span>Gas terperangkap di dalam magma membuat tekanan makin tinggi.</span>
+                                    </div>
+                                    <div class="p-3 bg-white rounded-xl shadow-sm border border-amber-200">
+                                        <div class="text-2xl font-bold text-amber-600 mb-1">3</div>
+                                        <strong class="block text-slate-800 mb-1">Magma Terdorong</strong>
+                                        <span>Karena lebih ringan dari batuan padat, magma naik melalui pipa.</span>
+                                    </div>
+                                    <div class="p-3 bg-white rounded-xl shadow-sm border border-amber-200">
+                                        <div class="text-2xl font-bold text-amber-600 mb-1">4</div>
+                                        <strong class="block text-slate-800 mb-1">Letusan / Erupsi</strong>
+                                        <span>Penutup kawah jebol dan meledakkan material ke udara.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 4: Dampak -->
+                        <div id="tab-dampak" class="tab-panel space-y-4 hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-2">
+                                    <h4 class="font-heading font-bold text-emerald-800 text-base flex items-center space-x-2">
+                                        <span>🌱</span><span>Dampak Positif (Manfaat)</span>
+                                    </h4>
+                                    <ul class="list-disc list-inside text-xs text-slate-700 space-y-1">
+                                        <td>Abu vulkanik membuat tanah di sekitarnya sangat subur untuk pertanian.</td>
+                                        <td>Menghasilkan pasir dan batuan berkualitas tinggi untuk bahan bangunan.</td>
+                                        <td>Menghasilkan sumber panas bumi (geothermal) sebagai energi ramah lingkungan.</td>
+                                        <td>Menjadi objek wisata dan laboratorium ilmu pengetahuan alam.</td>
+                                    </ul>
+                                </div>
+
+                                <div class="p-4 bg-red-50 rounded-2xl border border-red-200 space-y-2">
+                                    <h4 class="font-heading font-bold text-red-800 text-base flex items-center space-x-2">
+                                        <span>⚠️</span><span>Dampak Negatif (Bahaya)</span>
+                                    </h4>
+                                    <ul class="list-disc list-inside text-xs text-slate-700 space-y-1">
+                                        <td>Awan panas dan aliran lava merusak rumah, hutan, dan sawah.</td>
+                                        <td>Abu halus menyebabkan gangguan pernapasan (ISPA) dan jarak pandang buruk.</td>
+                                        <td>Banjir lahar dingin saat hujan deras menyapu daerah aliran sungai.</td>
+                                        <td>Warga harus mengungsi dan kehilangan tempat tinggal sementara.</td>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 5: Mitigasi -->
+                        <div id="tab-mitigasi" class="tab-panel space-y-4 hidden">
+                            <div class="p-4 bg-slate-900 text-white rounded-2xl space-y-3">
+                                <h4 class="font-heading font-bold text-amber-400 text-base">4 Tingkatan Status Gunung Api Indonesia</h4>
+                                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                                    <div class="p-2.5 bg-emerald-950 border border-emerald-600 rounded-xl">
+                                        <span class="font-bold text-emerald-400 block">🟢 NORMAL</span>
+                                        <span class="text-slate-300">Aktivitas biasa, aman dikunjungi.</span>
+                                    </div>
+                                    <div class="p-2.5 bg-yellow-950 border border-yellow-600 rounded-xl">
+                                        <span class="font-bold text-yellow-400 block">🟡 WASPADA</span>
+                                        <span class="text-slate-300">Mulai ada peningkatan seismik.</span>
+                                    </div>
+                                    <div class="p-2.5 bg-orange-950 border border-orange-600 rounded-xl">
+                                        <span class="font-bold text-orange-400 block">🟠 SIAGA</span>
+                                        <span class="text-slate-300">Potensi letusan makin dekat. Siap evakuasi.</span>
+                                    </div>
+                                    <div class="p-2.5 bg-red-950 border border-red-600 rounded-xl">
+                                        <span class="font-bold text-red-400 block">🔴 AWAS</span>
+                                        <span class="text-slate-300">Kritis! Wajib segera mengungsi!</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button onclick="navigateTo('eksplorasi')" class="px-5 py-2.5 bg-volcano-600 text-white font-bold font-heading rounded-xl shadow hover:bg-volcano-500 transition text-sm">
+                            Lanjut ke Eksplor Hotspot ➔
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 4. EKSPLORASI HOTSPOT SCREEN -->
+                <section id="sec-eksplorasi" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4">
+                        <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 4 dari 10</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">🔍 Eksplorasi Hotspot Gunung Api</h2>
+                        <p class="text-slate-600 text-sm">Klik tombol hotspot angka pada gambar gunung api untuk membedah setiap bagiannya!</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                        <!-- Hotspot Graphic Container -->
+                        <div class="lg:col-span-7 bg-slate-900 rounded-3xl p-4 relative overflow-hidden shadow-lg border border-slate-800">
+                            <svg viewBox="0 0 500 400" class="w-full h-auto">
+                                <defs>
+                                    <radialGradient id="magmaGlow" cx="50%" cy="50%" r="50%">
+                                        <stop offset="0%" stop-color="#ff4400" />
+                                        <stop offset="100%" stop-color="#990000" />
+                                    </radialGradient>
+                                </defs>
+                                
+                                <!-- Background Sky & Ash -->
+                                <rect width="500" height="400" fill="#1e293b"/>
+                                <!-- Ash Cloud -->
+                                <circle cx="250" cy="70" r="50" fill="#475569" opacity="0.8"/>
+                                <circle cx="210" cy="80" r="40" fill="#334155" opacity="0.9"/>
+                                <circle cx="290" cy="80" r="45" fill="#475569" opacity="0.8"/>
+
+                                <!-- Mountain Body -->
+                                <polygon points="60,370 250,130 440,370" fill="#473a32"/>
+                                <!-- Layers of lava rock -->
+                                <polygon points="120,370 250,130 380,370" fill="#362b25"/>
+
+                                <!-- Magma Chamber -->
+                                <ellipse cx="250" cy="350" rx="90" ry="35" fill="url(#magmaGlow)" class="animate-pulse"/>
+                                
+                                <!-- Main Vent -->
+                                <rect x="238" y="130" width="24" height="220" fill="#ef4444"/>
+
+                                <!-- Crater Peak -->
+                                <path d="M 215,130 Q 250,160 285,130" fill="#1e293b"/>
+
+                                <!-- Lava flow on slope -->
+                                <path d="M 270,140 Q 310,220 350,320" stroke="#f97316" stroke-width="12" fill="none" stroke-linecap="round"/>
+
+                                <!-- HOTSPOT BUTTON OVERLAYS -->
+                                <!-- 1: Dapur Magma -->
+                                <g transform="translate(250, 350)" class="cursor-pointer" onclick="clickHotspot(1)">
+                                    <circle r="18" fill="#ff441f" stroke="#ffffff" stroke-width="3" class="pulse-subtle"/>
+                                    <text y="5" text-anchor="middle" fill="white" font-weight="bold" font-size="14">1</text>
+                                </g>
+
+                                <!-- 2: Pipa Utama -->
+                                <g transform="translate(250, 230)" class="cursor-pointer" onclick="clickHotspot(2)">
+                                    <circle r="18" fill="#ff441f" stroke="#ffffff" stroke-width="3" class="pulse-subtle"/>
+                                    <text y="5" text-anchor="middle" fill="white" font-weight="bold" font-size="14">2</text>
+                                </g>
+
+                                <!-- 3: Kawah -->
+                                <g transform="translate(250, 120)" class="cursor-pointer" onclick="clickHotspot(3)">
+                                    <circle r="18" fill="#ff441f" stroke="#ffffff" stroke-width="3" class="pulse-subtle"/>
+                                    <text y="5" text-anchor="middle" fill="white" font-weight="bold" font-size="14">3</text>
+                                </g>
+
+                                <!-- 4: Awan Abu -->
+                                <g transform="translate(250, 60)" class="cursor-pointer" onclick="clickHotspot(4)">
+                                    <circle r="18" fill="#ff441f" stroke="#ffffff" stroke-width="3" class="pulse-subtle"/>
+                                    <text y="5" text-anchor="middle" fill="white" font-weight="bold" font-size="14">4</text>
+                                </g>
+
+                                <!-- 5: Aliran Lava -->
+                                <g transform="translate(320, 230)" class="cursor-pointer" onclick="clickHotspot(5)">
+                                    <circle r="18" fill="#ff441f" stroke="#ffffff" stroke-width="3" class="pulse-subtle"/>
+                                    <text y="5" text-anchor="middle" fill="white" font-weight="bold" font-size="14">5</text>
+                                </g>
+                            </svg>
+                        </div>
+
+                        <!-- Hotspot Info Display Box -->
+                        <div class="lg:col-span-5 bg-volcano-50 border border-volcano-200 rounded-3xl p-6 space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span id="hotspot-badge" class="px-3 py-1 bg-volcano-600 text-white font-bold font-heading text-xs rounded-full">
+                                    Hotspot #1
+                                </span>
+                                <span class="text-xs text-slate-500 font-medium">Klik angka di gambar</span>
+                            </div>
+
+                            <h3 id="hotspot-title" class="font-heading text-2xl font-bold text-volcano-900">
+                                1. Dapur Magma (Magma Chamber)
+                            </h3>
+
+                            <p id="hotspot-desc" class="text-slate-700 text-sm leading-relaxed">
+                                Dapur magma adalah kolam atau kantong raksasa di bawah kerak bumi yang menampung lelehan batuan cair berpijar super panas. Di sinilah tekanan tinggi terbentuk sebelum gunung api meletus!
+                            </p>
+
+                            <div class="p-3 bg-white rounded-xl border border-volcano-200 text-xs text-volcano-800 space-y-1">
+                                <span class="font-bold block">💡 Fakta Unik:</span>
+                                <span id="hotspot-fact">Suhu di dapur magma bisa mencapai 700°C hingga 1.300°C! Cukup panas untuk melelehkan besi seketika.</span>
+                            </div>
+
+                            <button onclick="speakHotspotInfo()" class="w-full py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold font-heading rounded-xl transition text-sm flex items-center justify-center space-x-2">
+                                <i class="fas fa-volume-high"></i>
+                                <span>Dengarkan Penjelasan Suara</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5. SIMULASI ERUPSI VIRTUAL SCREEN -->
+                <section id="sec-simulasi" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4">
+                        <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 5 dari 10</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">🧪 Laboratorium Virtual Simulasi Erupsi</h2>
+                        <p class="text-slate-600 text-sm">Ubah variabel tekanan gas dan kekentalan magma untuk melihat jenis erupsinya!</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Simulation Canvas -->
+                        <div class="lg:col-span-7 bg-slate-950 rounded-3xl p-4 flex flex-col items-center justify-center relative border border-slate-800">
+                            <canvas id="volcano-canvas" width="400" height="320" class="w-full max-w-full h-auto rounded-2xl bg-slate-900"></canvas>
+                            <div id="sim-status" class="mt-3 px-4 py-1.5 bg-slate-800 border border-slate-700 text-amber-300 rounded-full font-heading text-xs font-bold">
+                                Status: Siap Diuji Coba
+                            </div>
+                        </div>
+
+                        <!-- Simulation Controls & Output -->
+                        <div class="lg:col-span-5 space-y-5 bg-slate-50 p-5 rounded-3xl border border-slate-200">
+                            <h3 class="font-heading text-lg font-bold text-slate-800">🎛️ Kontrol Laboratorium</h3>
+
+                            <!-- Slider 1: Tekanan Gas -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <label for="slider-gas" class="text-slate-700">Tekanan Gas Dalam Magma:</label>
+                                    <span id="val-gas" class="text-volcano-600">Sedang (50%)</span>
+                                </div>
+                                <input type="range" id="slider-gas" min="10" max="100" value="50" oninput="updateSimParameters()" class="w-full accent-volcano-600 cursor-pointer">
+                            </div>
+
+                            <!-- Slider 2: Kekentalan Magma -->
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <label for="slider-viscosity" class="text-slate-700">Kekentalan Magma (Viskositas):</label>
+                                    <span id="val-viscosity" class="text-volcano-600">Sedang (50%)</span>
+                                </div>
+                                <input type="range" id="slider-viscosity" min="10" max="100" value="50" oninput="updateSimParameters()" class="w-full accent-volcano-600 cursor-pointer">
+                            </div>
+
+                            <!-- Action Launch Button -->
+                            <button onclick="runEruptionSimulation()" class="w-full py-3 bg-gradient-to-r from-amber-500 to-volcano-600 hover:brightness-110 text-white font-heading font-bold text-base rounded-2xl shadow-lg transition flex items-center justify-center space-x-2">
+                                <span>🚀 Luncurkan Erupsi Gunung!</span>
+                            </button>
+
+                            <!-- Analysis Result Box -->
+                            <div id="sim-analysis" class="p-4 bg-white rounded-2xl border border-slate-200 space-y-2">
+                                <h4 class="font-heading font-bold text-sm text-slate-800">Hasil Analisis Erupsi:</h4>
+                                <p id="sim-result-text" class="text-xs text-slate-600 leading-relaxed">
+                                    Tekan tombol luncurkan erupsi di atas untuk melihat apakah gunung akan mengalami <strong>Erupsi Efusif (Meleleh)</strong> atau <strong>Erupsi Eksplosif (Dahsyat)</strong>.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. MINI GAME SCREEN -->
+                <section id="sec-minigame" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4">
+                        <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 6 dari 10</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">🎮 Mini Game: Detektif Kebencanaan</h2>
+                        <p class="text-slate-600 text-sm">Pilih mana barang yang WAJIB dimasukkan ke dalam Tas Siaga Bencana Volkanik!</p>
+                    </div>
+
+                    <div class="bg-amber-50 rounded-3xl p-6 border border-amber-200 space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-heading font-bold text-lg text-amber-900">🎒 Misi: Kemas Tas Siaga Bencanamu!</h3>
+                                <p class="text-xs text-amber-800">Klik item yang BENAR untuk dimasukkan ke tas siaga (Pilih 5 barang terpenting).</p>
+                            </div>
+                            <div class="text-right">
+                                <span id="bag-count" class="font-heading font-bold text-xl text-volcano-600">0 / 5</span>
+                                <span class="text-xs text-slate-500 block">Item Terpilih</span>
+                            </div>
+                        </div>
+
+                        <!-- Grid of Bag Options -->
+                        <div id="bag-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <!-- JS will inject dynamic items -->
+                        </div>
+
+                        <div class="flex justify-between items-center pt-2">
+                            <button onclick="resetMiniGame()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold rounded-xl font-heading">
+                                🔄 Ulangi Pilih
+                            </button>
+                            <button onclick="checkMiniGameResult()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-bold rounded-xl font-heading shadow">
+                                🔍 Periksa Tas Siaga
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. LKPD INTERAKTIF SCREEN -->
+                <section id="sec-lkpd" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4">
+                        <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 7 dari 10</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">📝 Lembar Kerja Peserta Didik (LKPD)</h2>
+                        <p class="text-slate-600 text-sm">Selesaikan 3 tugas interaktif berikut untuk memperkuat pemahamanmu!</p>
+                    </div>
+
+                    <!-- LKPD Task 1: Urutkan Proses Erupsi -->
+                    <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-heading font-bold text-base text-slate-800 flex items-center space-x-2">
+                            <span class="w-7 h-7 bg-volcano-600 text-white rounded-lg flex items-center justify-center text-xs">1</span>
+                            <span>Urutkan Kronologi Erupsi Gunung Api</span>
+                        </h3>
+                        <p class="text-xs text-slate-600">Klik langkah-langkah di bawah untuk memilih urutan yang benar dari awal hingga terjadi meletus!</p>
+
+                        <div id="lkpd-sequence-container" class="space-y-2">
+                            <!-- Interactive sequence buttons -->
+                        </div>
+                    </div>
+
+                    <!-- LKPD Task 2: Menjodohkan Istilah -->
+                    <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-heading font-bold text-base text-slate-800 flex items-center space-x-2">
+                            <span class="w-7 h-7 bg-volcano-600 text-white rounded-lg flex items-center justify-center text-xs">2</span>
+                            <span>Jodohkan Istilah dan Definisi</span>
+                        </h3>
+
+                        <div id="lkpd-match-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                            <!-- Dynamic Matching Pairs -->
+                        </div>
+                    </div>
+
+                    <!-- LKPD Task 3: Studi Kasus Sederhana -->
+                    <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-heading font-bold text-base text-slate-800 flex items-center space-x-2">
+                            <span class="w-7 h-7 bg-volcano-600 text-white rounded-lg flex items-center justify-center text-xs">3</span>
+                            <span>Studi Kasus Mitigasi Bencana</span>
+                        </h3>
+                        <div class="p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 leading-relaxed">
+                            <strong>Kasus:</strong> Desa Suka Maju terletak 4 km dari puncak Gunung Merapi. Petugas Pusat Vulkanologi mengumumkan bahwa status gunung dinaikkan menjadi <strong>AWAS (🔴 Level IV)</strong> karena awan panas terus keluar. Apa tindakan terbaik yang harus dilakukan oleh Budi dan keluarganya?
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold text-slate-700">Pilih Jawaban Terbaik:</label>
+                            <div class="space-y-2 text-xs">
+                                <label class="flex items-center space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="studi-kasus" value="wrong1" class="accent-volcano-600">
+                                    <span>A. Tetap tinggal di rumah dan menonton gunung dari halaman.</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="studi-kasus" value="correct" class="accent-volcano-600">
+                                    <span>B. Segera menggunakan masker, membawa Tas Siaga, dan mengungsi ke tempat aman sesuai arahan petugas.</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-3 bg-slate-50 rounded-xl border border-slate-200 cursor-pointer hover:bg-slate-100">
+                                    <input type="radio" name="studi-kasus" value="wrong2" class="accent-volcano-600">
+                                    <span>C. Naik ke puncak gunung untuk mengambil foto abu vulkanik.</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end pt-2">
+                        <button onclick="checkLKPDAnswers()" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold font-heading rounded-xl shadow transition text-sm">
+                            Submit & Periksa LKPD ➔
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 8. KUIS ADAPTIF SCREEN -->
+                <section id="sec-kuis" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 8 dari 10</span>
+                            <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">🧩 Kuis Adaptif (5 Level Misi)</h2>
+                            <p class="text-slate-600 text-sm">Jawab dengan teliti! Tingkat kesulitan akan menyesuaikan secara bertahap.</p>
+                        </div>
+                        <div class="text-right">
+                            <span id="quiz-level-badge" class="px-3 py-1 bg-amber-500 text-slate-900 font-bold font-heading text-xs rounded-full">
+                                Level 1 / 5
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Quiz Question Card Container -->
+                    <div class="p-6 bg-slate-900 text-white rounded-3xl shadow-xl space-y-6 border border-slate-800">
+                        <div class="flex justify-between items-center text-xs text-slate-400">
+                            <span id="quiz-topic-title">Topik: Struktur Gunung Api</span>
+                            <span id="quiz-progress-text">Soal 1 dari 5</span>
+                        </div>
+
+                        <h3 id="quiz-question-text" class="font-heading text-lg sm:text-xl font-bold text-amber-300 leading-snug">
+                            Memuat pertanyaan kuis...
+                        </h3>
+
+                        <!-- Quiz Options Grid -->
+                        <div id="quiz-options-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <!-- Options injected by JS -->
+                        </div>
+
+                        <!-- Feedback Message Box -->
+                        <div id="quiz-feedback" class="hidden p-4 rounded-2xl text-xs leading-relaxed">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 9. REFLEKSI DIRI SCREEN -->
+                <section id="sec-refleksi" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4">
+                        <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 9 dari 10</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">💡 Refleksi Diri Penjelajah</h2>
+                        <p class="text-slate-600 text-sm">Bagaimana perasaanmu setelah menyelesaikan petualangan sains hari ini?</p>
+                    </div>
+
+                    <div class="p-6 bg-amber-50 rounded-3xl border border-amber-200 space-y-6">
+                        <!-- Emoji Feelings -->
+                        <div class="space-y-2">
+                            <label class="block font-heading font-bold text-amber-900 text-sm">1. Bagaimana perasaanmu saat belajar materi Gunung Api hari ini?</label>
+                            <div class="flex space-x-4 text-3xl justify-center sm:justify-start">
+                                <button onclick="selectEmojiFeel('😃')" class="emoji-btn p-3 rounded-2xl bg-white shadow-sm border border-amber-200 hover:scale-110 transition">😃</button>
+                                <button onclick="selectEmojiFeel('🤩')" class="emoji-btn p-3 rounded-2xl bg-white shadow-sm border border-amber-200 hover:scale-110 transition">🤩</button>
+                                <button onclick="selectEmojiFeel('🤔')" class="emoji-btn p-3 rounded-2xl bg-white shadow-sm border border-amber-200 hover:scale-110 transition">🤔</button>
+                                <button onclick="selectEmojiFeel('😎')" class="emoji-btn p-3 rounded-2xl bg-white shadow-sm border border-amber-200 hover:scale-110 transition">😎</button>
+                            </div>
+                        </div>
+
+                        <!-- Reflection Input -->
+                        <div class="space-y-2">
+                            <label class="block font-heading font-bold text-amber-900 text-sm">2. Hal terpenting apa yang baru kamu ketahui hari ini?</label>
+                            <textarea id="refleksi-text" rows="3" placeholder="Contoh: Saya baru tahu kalau beda magma dan lava itu terletak pada posisinya..." 
+                                      class="w-full p-4 rounded-2xl bg-white border border-amber-200 text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"></textarea>
+                        </div>
+
+                        <button onclick="submitRefleksi()" class="w-full py-3 bg-volcano-600 hover:bg-volcano-500 text-white font-bold font-heading rounded-2xl shadow transition text-sm">
+                            Simpan Refleksi & Lihat Hasil ➔
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 10. BADGE & SERTIFIKAT SCREEN -->
+                <section id="sec-sertifikat" class="view-section space-y-6 hidden">
+                    <div class="border-b border-slate-200 pb-4 no-print">
+                        <span class="text-xs font-bold text-volcano-600 uppercase tracking-widest font-heading">Langkah 10 dari 10</span>
+                        <h2 class="font-heading text-2xl sm:text-3xl font-bold text-slate-800 mt-1">🏆 Badge & Sertifikat Hasil Belajar</h2>
+                        <p class="text-slate-600 text-sm">Selamat! Kamu telah menyelesaikan seluruh misi pembelajaran IPAS Gunung Api.</p>
+                    </div>
+
+                    <!-- Summary Stats Bar -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 no-print">
+                        <div class="p-4 bg-amber-50 rounded-2xl border border-amber-200 text-center">
+                            <span class="text-xs text-amber-800 font-medium block">Total Skor XP</span>
+                            <span id="res-xp" class="font-heading text-2xl font-bold text-amber-600">0 XP</span>
+                        </div>
+                        <div class="p-4 bg-emerald-50 rounded-2xl border border-emerald-200 text-center">
+                            <span class="text-xs text-emerald-800 font-medium block">Akurasi Kuis</span>
+                            <span id="res-accuracy" class="font-heading text-2xl font-bold text-emerald-600">0%</span>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-2xl border border-blue-200 text-center">
+                            <span class="text-xs text-blue-800 font-medium block">LKPD Status</span>
+                            <span id="res-lkpd" class="font-heading text-2xl font-bold text-blue-600">Selesai</span>
+                        </div>
+                        <div class="p-4 bg-volcano-50 rounded-2xl border border-volcano-200 text-center">
+                            <span class="text-xs text-volcano-800 font-medium block">Badge Diperoleh</span>
+                            <span id="res-badges" class="font-heading text-2xl font-bold text-volcano-600">3 / 3</span>
+                        </div>
+                    </div>
+
+                    <!-- Badges Collection -->
+                    <div class="p-5 bg-slate-900 text-white rounded-3xl space-y-4 no-print">
+                        <h3 class="font-heading font-bold text-base text-amber-400">🎖️ Koleksi Badge Resmi Penjelajah</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+                            <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700 space-y-2">
+                                <div class="text-4xl">🥉</div>
+                                <h4 class="font-heading font-bold text-amber-300 text-sm">Penjelajah Vulkano</h4>
+                                <p class="text-[11px] text-slate-400">Berhasil mempelajari bagian-bagian struktur gunung api.</p>
+                            </div>
+                            <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700 space-y-2">
+                                <div class="text-4xl">🥈</div>
+                                <h4 class="font-heading font-bold text-amber-300 text-sm">Detektif Gunung Api</h4>
+                                <p class="text-[11px] text-slate-400">Berhasil menyelesaikan eksperimen simulasi erupsi virtual.</p>
+                            </div>
+                            <div class="p-4 bg-slate-800 rounded-2xl border border-slate-700 space-y-2">
+                                <div class="text-4xl">🥇</div>
+                                <h4 class="font-heading font-bold text-amber-300 text-sm">Ahli Mitigasi & Safety</h4>
+                                <p class="text-[11px] text-slate-400">Menguasai langkah keselamatan & lulus Kuis Adaptif.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Printable Certificate Container -->
+                    <div id="certificate-box" class="p-8 sm:p-12 bg-white rounded-3xl border-8 border-amber-400 shadow-2xl space-y-6 text-center relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-amber-100 rounded-bl-full pointer-events-none opacity-50"></div>
+                        <div class="absolute bottom-0 left-0 w-32 h-32 bg-volcano-100 rounded-tr-full pointer-events-none opacity-50"></div>
+
+                        <div class="space-y-2">
+                            <span class="text-3xl">🌋 CERTIFICATE OF ACHIEVEMENT 🌋</span>
+                            <h3 class="font-heading text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-wide">
+                                SERTIFIKAT PENJELAJAH SAINS
+                            </h3>
+                            <p class="text-xs text-slate-500 uppercase tracking-widest font-bold">Mata Pelajaran IPAS Kelas 5 SD - Kurikulum Merdeka</p>
+                        </div>
+
+                        <div class="py-4 space-y-2">
+                            <p class="text-sm text-slate-600">Diberikan secara bangga kepada:</p>
+                            <h4 id="cert-student-name" class="font-heading text-3xl sm:text-4xl font-bold text-volcano-600 underline underline-offset-8">
+                                Penjelajah Cilik IPAS
+                            </h4>
+                            <p class="text-xs text-slate-600 max-w-lg mx-auto pt-2">
+                                Telah secara tuntas menyelesaikan seluruh rangkaian Petualangan Interaktif <strong>"Gunung Api & Proses Erupsi"</strong> dengan predikat Sangat Baik.
+                            </p>
+                        </div>
+
+                        <div class="flex justify-around items-center pt-6 border-t border-slate-200 text-xs text-slate-600">
+                            <div>
+                                <span class="block font-bold text-slate-800">Tanggal Selesai:</span>
+                                <span id="cert-date">4 Oktober 2026</span>
+                            </div>
+                            <div class="w-20 h-20 bg-amber-400 rounded-full flex items-center justify-center font-heading font-bold text-slate-900 text-xs shadow">
+                                LULUS!
+                            </div>
+                            <div>
+                                <span class="block font-bold text-slate-800">Guru / Instructional Designer:</span>
+                                <span>Modul IPAS Interaktif</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Print Button -->
+                    <div class="flex justify-center pt-4 no-print">
+                        <button onclick="window.print()" class="px-8 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold font-heading rounded-2xl shadow-lg transition flex items-center space-x-3">
+                            <i class="fas fa-print"></i>
+                            <span>Cetak / Simpan Sertifikat (PDF)</span>
+                        </button>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Bottom Prev/Next Controls Bar -->
+            <div class="mt-8 pt-4 border-t border-slate-200 flex items-center justify-between no-print">
+                <button id="btn-prev-nav" onclick="navigateStep(-1)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-bold font-heading rounded-xl transition flex items-center space-x-2">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Sebelumnya</span>
+                </button>
+                
+                <span id="step-indicator" class="text-xs font-bold text-slate-400 font-heading">
+                    Langkah 1 dari 10
+                </span>
+
+                <button id="btn-next-nav" onclick="navigateStep(1)" class="px-5 py-2 bg-volcano-600 hover:bg-volcano-500 text-white text-sm font-bold font-heading rounded-xl shadow transition flex items-center space-x-2">
+                    <span>Berikutnya</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-xs border-t border-slate-800 no-print">
+        <div class="max-w-7xl mx-auto px-4 space-y-2">
+            <p>🌋 Aplikasi Pembelajaran Interaktif IPAS Kelas 5 SD - Kebencanaan Gunung Api</p>
+            <p class="text-slate-500">Dirancang sesuai standar Instructional Design & Learning Experience Design (LXD) ramah anak.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Global Application State
+        const state = {
+            studentName: 'Penjelajah Cilik',
+            currentStepIndex: 0,
+            xp: 0,
+            narrationEnabled: true,
+            sfxEnabled: true,
+            selectedBagItems: [],
+            currentQuizLevel: 1,
+            quizScore: 0,
+            quizTotalAnswered: 0,
+            selectedEmoji: '😃',
+            hotspotCurrentIndex: 1,
+            lkpdSequence: []
+        };
+
+        const steps = ['home', 'tujuan', 'materi', 'eksplorasi', 'simulasi', 'minigame', 'lkpd', 'kuis', 'refleksi', 'sertifikat'];
+
+        // Audio Generators using Web Audio API for crisp SFX without external files
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (!state.sfxEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15); // E5
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now); // A3
+                    osc.frequency.exponentialRampToValueAtTime(130, now + 0.2);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, now);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                    osc.start(now);
+                    osc.stop(now + 0.05);
+                } else if (type === 'rumble') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(80, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 1.0);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+                    osc.start(now);
+                    osc.stop(now + 1.0);
+                }
+            } catch (e) {
+                console.log('Audio Context error:', e);
+            }
+        }
+
+        // Web Speech API Narration Engine
+        function speakText(text) {
+            if (!state.narrationEnabled) return;
+            window.speechSynthesis.cancel(); // Stop ongoing speech
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 0.95;
+            utterance.pitch = 1.05;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function toggleNarration() {
+            state.narrationEnabled = !state.narrationEnabled;
+            const btn = document.getElementById('icon-narration');
+            if (state.narrationEnabled) {
+                btn.className = 'fas fa-volume-high text-sm sm:text-base';
+                speakText('Suara narasi diaktifkan.');
+            } else {
+                btn.className = 'fas fa-volume-xmark text-sm sm:text-base text-slate-500';
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function toggleSFX() {
+            state.sfxEnabled = !state.sfxEnabled;
+            const btn = document.getElementById('icon-sfx');
+            if (state.sfxEnabled) {
+                btn.className = 'fas fa-bell text-sm sm:text-base';
+                playSound('correct');
+            } else {
+                btn.className = 'fas fa-bell-slash text-sm sm:text-base text-slate-500';
+            }
+        }
+
+        function navigateTo(stepId) {
+            playSound('click');
+            const targetIndex = steps.indexOf(stepId);
+            if (targetIndex !== -1) {
+                state.currentStepIndex = targetIndex;
+            }
+
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+            
+            // Show target section
+            const targetSec = document.getElementById('sec-' + stepId);
+            if (targetSec) targetSec.classList.remove('hidden');
+
+            // Update Nav Button Styles
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-volcano-600', 'text-white', 'shadow');
+                btn.classList.add('hover:bg-slate-100', 'text-slate-600');
+            });
+
+            const activeBtn = document.getElementById('nav-' + stepId);
+            if (activeBtn) {
+                activeBtn.classList.remove('hover:bg-slate-100', 'text-slate-600');
+                activeBtn.classList.add('bg-volcano-600', 'text-white', 'shadow');
+            }
+
+            // Update Progress Bar
+            const progressPercent = Math.round(((state.currentStepIndex + 1) / steps.length) * 100);
+            document.getElementById('global-progress').style.width = progressPercent + '%';
+            document.getElementById('misi-percent').innerText = progressPercent + '%';
+            document.getElementById('step-indicator').innerText = `Langkah ${state.currentStepIndex + 1} dari ${steps.length}`;
+
+            // Narration per section
+            const narrations = {
+                'home': 'Selamat datang penjelajah muda di petualangan gunung api!',
+                'tujuan': 'Berikut adalah tujuan pembelajaran dan misi yang akan kamu capai.',
+                'materi': 'Pelajari bagian gunung api, magma, lava, dan status kebencanaan.',
+                'eksplorasi': 'Klik angka pada gambar untuk mengeksplorasi bagian dalam gunung api.',
+                'simulasi': 'Eksperimen virtual! Atur tekanan gas dan kekentalan magma.',
+                'minigame': 'Pilih barang-barang terpenting untuk dimasukkan ke Tas Siaga Bencana.',
+                'lkpd': 'Selesaikan lembar kerja peserta didik interaktif ini.',
+                'kuis': 'Saatnya menguji pengetahuanmu pada Kuis Adaptif 5 level!',
+                'refleksi': 'Bagikan pengalaman dan refleksi belajarmu hari ini.',
+                'sertifikat': 'Selamat! Kamu berhak mendapatkan sertifikat penjelajah IPAS.'
+            };
+            if (narrations[stepId]) speakText(narrations[stepId]);
+
+            // Special initializations per screen
+            if (stepId === 'minigame') initMiniGame();
+            if (stepId === 'lkpd') initLKPD();
+            if (stepId === 'kuis') renderQuizQuestion();
+            if (stepId === 'sertifikat') updateCertificateDetails();
+        }
+
+        function navigateStep(direction) {
+            let nextIndex = state.currentStepIndex + direction;
+            if (nextIndex >= 0 && nextIndex < steps.length) {
+                navigateTo(steps[nextIndex]);
+            }
+        }
+
+        function startAdventure() {
+            const nameInput = document.getElementById('input-student-name').value.trim();
+            if (nameInput) {
+                state.studentName = nameInput;
+            }
+            addXP(20);
+            navigateTo('tujuan');
+        }
+
+        function addXP(amount) {
+            state.xp += amount;
+            document.getElementById('user-xp').innerText = state.xp + ' XP';
+            // Check badge unlocks based on XP
+            let badges = 1;
+            if (state.xp >= 50) badges = 2;
+            if (state.xp >= 100) badges = 3;
+            document.getElementById('badge-count').innerText = badges + ' Badge';
+        }
+
+        function switchMateriTab(tabId) {
+            playSound('click');
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.add('hidden'));
+            document.querySelectorAll('.materi-tab').forEach(b => {
+                b.classList.remove('bg-volcano-600', 'text-white', 'shadow');
+                b.classList.add('bg-slate-100', 'text-slate-600');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const btn = document.getElementById('btn-' + tabId);
+            if (btn) {
+                btn.classList.remove('bg-slate-100', 'text-slate-600');
+                btn.classList.add('bg-volcano-600', 'text-white', 'shadow');
+            }
+        }
+
+        function readCurrentMateriTab() {
+            const activeTab = document.querySelector('.tab-panel:not(.hidden)');
+            if (activeTab) {
+                speakText(activeTab.innerText);
+            }
+        }
+
+        const hotspotData = {
+            1: {
+                title: "1. Dapur Magma (Magma Chamber)",
+                desc: "Dapur magma adalah kolam raksasa di bawah kerak bumi yang menampung lelehan batuan cair berpijar super panas. Di sinilah tekanan tinggi terbentuk sebelum gunung api meletus!",
+                fact: "Suhu di dapur magma bisa mencapai 700°C hingga 1.300°C! Cukup panas untuk melelehkan besi seketika."
+            },
+            2: {
+                title: "2. Pipa Utama (Saluran / Conduit)",
+                desc: "Saluran Pipa Utama berfungsi seperti terowongan vertikal tempat terdorongnya magma naik dari dapur magma menuju puncak kawah saat terjadi erupsi.",
+                fact: "Jika saluran ini tersumbat oleh batuan keras, tekanan gas akan terus menumpuk hingga memicu letusan yang sangat dahsyat!"
+            },
+            3: {
+                title: "3. Kawah Utama (Crater)",
+                desc: "Kawah adalah lubang bukaan di puncak gunung api tempat keluarnya magma, abu vulkanik, batu bom, dan gas beracun ke permukaan bumi.",
+                fact: "Banyak kawah gunung api pasif terisi air hujan dan membentuk danau kawah yang indah berwarna biru atau hijau!"
+            },
+            4: {
+                title: "4. Awan Panas & Abu Vulkanik",
+                desc: "Awan panas (dikenal sebagai Wedhus Gembel) adalah campuran abu, kerikil, dan gas membara yang meluncur turun lereng dengan kecepatan hingga 200 km/jam!",
+                fact: "Abu vulkanik sangat halus tetapi rasanya tajam seperti pecahan kaca kecil. Kita wajib memakai masker saat hujan abu!"
+            },
+            5: {
+                title: "5. Aliran Lava (Lava Flow)",
+                desc: "Lava adalah nama bagi magma yang sudah keluar mengalir di lereng gunung api. Lava cair bergerak perlahan lalu membeku menjadi batuan keras.",
+                fact: "Tanah bekas pijakan abu dan lava membeku akan menjadi tanah yang sangat subur untuk pertanian beberapa tahun kemudian!"
+            }
+        };
+
+        function clickHotspot(index) {
+            playSound('correct');
+            state.hotspotCurrentIndex = index;
+            const data = hotspotData[index];
+            document.getElementById('hotspot-badge').innerText = `Hotspot #${index}`;
+            document.getElementById('hotspot-title').innerText = data.title;
+            document.getElementById('hotspot-desc').innerText = data.desc;
+            document.getElementById('hotspot-fact').innerText = data.fact;
+            speakText(data.title + '. ' + data.desc);
+            addXP(5);
+        }
+
+        function speakHotspotInfo() {
+            const data = hotspotData[state.hotspotCurrentIndex];
+            speakText(data.title + '. ' + data.desc + ' Fakta unik: ' + data.fact);
+        }
+
+        function initCanvas() {
+            const canvas = document.getElementById('volcano-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw static volcano initial frame
+            ctx.fillStyle = "#0f172a";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Mountain
+            ctx.beginPath();
+            ctx.moveTo(40, 300);
+            ctx.lineTo(200, 120);
+            ctx.lineTo(360, 300);
+            ctx.fillStyle = "#334155";
+            ctx.fill();
+
+            // Magma base
+            ctx.beginPath();
+            ctx.arc(200, 280, 45, 0, Math.PI * 2);
+            ctx.fillStyle = "#dc2626";
+            ctx.fill();
+
+            // Vent
+            ctx.fillStyle = "#ef4444";
+            ctx.fillRect(193, 120, 14, 160);
+        }
+
+        function updateSimParameters() {
+            const gas = document.getElementById('slider-gas').value;
+            const vis = document.getElementById('slider-viscosity').value;
+
+            document.getElementById('val-gas').innerText = gas > 70 ? 'Tinggi 🔥' : (gas < 30 ? 'Rendah 💧' : 'Sedang ⚡');
+            document.getElementById('val-viscosity').innerText = vis > 70 ? 'Sangat Kental 🧱' : (vis < 30 ? 'Cair 🌊' : 'Sedang 🌋');
+        }
+
+        function runEruptionSimulation() {
+            playSound('rumble');
+            addXP(15);
+            const gas = parseInt(document.getElementById('slider-gas').value);
+            const vis = parseInt(document.getElementById('slider-viscosity').value);
+            
+            const canvas = document.getElementById('volcano-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let frame = 0;
+            const isExplosive = (gas > 50 && vis > 40);
+
+            function animateEruption() {
+                frame++;
+                ctx.fillStyle = "#0f172a";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Mountain
+                ctx.beginPath();
+                ctx.moveTo(40, 300);
+                ctx.lineTo(200, 120);
+                ctx.lineTo(360, 300);
+                ctx.fillStyle = "#334155";
+                ctx.fill();
+
+                // Magma chamber pulsating
+                ctx.beginPath();
+                ctx.arc(200, 280, 45 + Math.sin(frame * 0.2) * 5, 0, Math.PI * 2);
+                ctx.fillStyle = "#dc2626";
+                ctx.fill();
+
+                // Conduit eruption flow
+                ctx.fillStyle = "#ff4400";
+                ctx.fillRect(193, 120, 14, 160);
+
+                if (isExplosive) {
+                    // Explosive particles ash
+                    for (let i = 0; i < 30; i++) {
+                        ctx.beginPath();
+                        const px = 200 + (Math.random() - 0.5) * (frame * 3);
+                        const py = 120 - Math.random() * (frame * 2.5);
+                        ctx.arc(px, Math.max(20, py), Math.random() * 12 + 4, 0, Math.PI * 2);
+                        ctx.fillStyle = Math.random() > 0.5 ? "#f97316" : "#64748b";
+                        ctx.fill();
+                    }
+                } else {
+                    // Effusive lava flow on slope
+                    ctx.beginPath();
+                    ctx.moveTo(200, 120);
+                    ctx.quadraticCurveTo(240, 200, 280 + Math.min(frame * 2, 70), 300);
+                    ctx.lineWidth = 10;
+                    ctx.strokeStyle = "#f97316";
+                    ctx.stroke();
+                }
+
+                if (frame < 50) {
+                    requestAnimationFrame(animateEruption);
+                } else {
+                    // End Animation Analysis Text
+                    const statusElem = document.getElementById('sim-status');
+                    const textElem = document.getElementById('sim-result-text');
+
+                    if (isExplosive) {
+                        statusElem.innerText = 'Tipe Erupsi: Erupsi Eksplosif (Dahsyat!) 🔥';
+                        textElem.innerHTML = `<strong>Hasil:</strong> Kerena tekanan gas tinggi (${gas}%) dan magma kental (${vis}%), gas terperangkap dan meledak dahsyat menghasilkan awan abu tinggi dan batu bom vulkanik!`;
+                        speakText("Terjadi Erupsi Eksplosif yang dahsyat karena tekanan gas tinggi!");
+                    } else {
+                        statusElem.innerText = 'Tipe Erupsi: Erupsi Efusif (Meleleh) 🌋';
+                        textElem.innerHTML = `<strong>Hasil:</strong> Tekanan gas yang lebih rendah membuat lava cair meluncur perlahan turun melewati lereng gunung tanpa ledakan besar.`;
+                        speakText("Terjadi Erupsi Efusif! Lava mengalir meluncur di lereng gunung.");
+                    }
+                }
+            }
+
+            animateEruption();
+        }
+
+        const miniGameItems = [
+            { id: 1, name: "Masker N95", icon: "😷", isCorrect: true, desc: "Melindungi pernapasan dari abu vulkanik tajam." },
+            { id: 2, name: "Senter & Baterai", icon: "🔦", isCorrect: true, desc: "Penerangan saat mati lampu atau siang hari tertutup abu." },
+            { id: 3, name: "Air Minum Bersih", icon: "🍾", isCorrect: true, desc: "Mencegah dehidrasi saat evakuasi." },
+            { id: 4, name: "Kacamata Goggles", icon: "🥽", isCorrect: true, desc: "Melindungi mata dari iritasi abu panas." },
+            { id: 5, name: "Peluit Darurat", icon: "📢", isCorrect: true, desc: "Memberikan sinyal posisi saat membutuhkan pertolongan." },
+            { id: 6, name: "Televisi Raksasa", icon: "📺", isCorrect: false, desc: "Terlalu berat dan tidak relevan saat evakuasi darurat!" },
+            { id: 7, name: "Stik Game PS", icon: "🎮", isCorrect: false, desc: "Bukan kebutuhan pokok keselamatan." },
+            { id: 8, name: "Boneka Besar", icon: "🧸", isCorrect: false, desc: "Memenuhi kapasitas tas siaga." }
+        ];
+
+        function initMiniGame() {
+            state.selectedBagItems = [];
+            document.getElementById('bag-count').innerText = "0 / 5";
+            const container = document.getElementById('bag-grid');
+            container.innerHTML = '';
+
+            miniGameItems.forEach(item => {
+                const btn = document.createElement('button');
+                btn.className = `bag-item-btn p-4 bg-white rounded-2xl border-2 border-amber-200 hover:border-amber-400 flex flex-col items-center space-y-2 transition shadow-sm`;
+                btn.onclick = () => toggleBagItem(item.id, btn);
+                btn.innerHTML = `
+                    <span class="text-3xl">${item.icon}</span>
+                    <span class="font-heading font-bold text-xs text-slate-800 text-center">${item.name}</span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function toggleBagItem(id, btnElem) {
+            playSound('click');
+            const idx = state.selectedBagItems.indexOf(id);
+            if (idx > -1) {
+                state.selectedBagItems.splice(idx, 1);
+                btnElem.classList.remove('bg-amber-200', 'border-volcano-600', 'ring-2', 'ring-volcano-500');
+            } else {
+                if (state.selectedBagItems.length >= 5) {
+                    speakText("Tas siaga mu sudah penuh 5 barang terpenting!");
+                    return;
+                }
+                state.selectedBagItems.push(id);
+                btnElem.classList.add('bg-amber-200', 'border-volcano-600', 'ring-2', 'ring-volcano-500');
+            }
+            document.getElementById('bag-count').innerText = `${state.selectedBagItems.length} / 5`;
+        }
+
+        function resetMiniGame() {
+            initMiniGame();
+        }
+
+        function checkMiniGameResult() {
+            if (state.selectedBagItems.length < 5) {
+                speakText("Pilihlah 5 barang terlebih dahulu untuk mengisi Tas Siaga!");
+                return;
+            }
+
+            const correctSelected = state.selectedBagItems.filter(id => {
+                const item = miniGameItems.find(i => i.id === id);
+                return item && item.isCorrect;
+            });
+
+            if (correctSelected.length === 5) {
+                playSound('correct');
+                addXP(30);
+                speakText("Hebat sekali! Semua barang yang kamu pilih sangat tepat untuk Tas Siaga Bencana Volkanik!");
+            } else {
+                playSound('wrong');
+                speakText(`Kamu berhasil memilih ${correctSelected.length} barang tepat. Pastikan tidak membawa barang hiburan atau elektronik berat saat evakuasi ya!`);
+            }
+        }
+
+        const sequenceItems = [
+            "Penumpukan magma panas di Dapur Magma",
+            "Peningkatan tekanan gas yang sangat kuat",
+            "Magma terdorong naik melewati Pipa Utama",
+            "Semburan letusan abu vulkanik & aliran lava dari Kawah"
+        ];
+
+        function initLKPD() {
+            // Task 1: Sequence
+            const seqContainer = document.getElementById('lkpd-sequence-container');
+            seqContainer.innerHTML = '';
+            
+            // Shuffle displayed items
+            const shuffled = [...sequenceItems].sort(() => 0.5 - Math.random());
+            state.lkpdSequence = [];
+
+            shuffled.forEach((text) => {
+                const item = document.createElement('div');
+                item.className = "p-3 bg-slate-50 border border-slate-200 rounded-xl cursor-pointer hover:bg-volcano-50 hover:border-volcano-300 text-xs text-slate-700 font-medium flex items-center justify-between";
+                item.onclick = () => selectSequenceItem(text, item);
+                item.innerHTML = `<span>${text}</span> <span class="badge-seq font-bold text-volcano-600"></span>`;
+                seqContainer.appendChild(item);
+            });
+
+            // Task 2: Matching
+            const matchGrid = document.getElementById('lkpd-match-grid');
+            matchGrid.innerHTML = `
+                <div class="space-y-2">
+                    <label class="font-bold text-slate-700 block">Istilah:</label>
+                    <div class="p-3 bg-red-50 border border-red-200 rounded-xl font-bold text-red-800">1. Magma</div>
+                    <div class="p-3 bg-orange-50 border border-orange-200 rounded-xl font-bold text-orange-800">2. Lahar</div>
+                    <div class="p-3 bg-slate-100 border border-slate-300 rounded-xl font-bold text-slate-800">3. Abu Vulkanik</div>
+                </div>
+                <div class="space-y-2">
+                    <label class="font-bold text-slate-700 block">Pilih Definisi Tepat:</label>
+                    <select id="match-select-1" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs">
+                        <option value="">-- Pilih Definisi Magma --</option>
+                        <option value="correct">Batuan cair super panas yang berada DI DALAM perut bumi</option>
+                        <option value="wrong1">Lumpur hasil racikan abu dan air hujan di sungai</option>
+                        <option value="wrong2">Debu halus hasil letusan di udara</option>
+                    </select>
+                    <select id="match-select-2" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs">
+                        <option value="">-- Pilih Definisi Lahar --</option>
+                        <option value="wrong1">Batuan cair super panas yang berada DI DALAM perut bumi</option>
+                        <option value="correct">Banjir material lumpur abu dan batu cair saat hujan deras</option>
+                        <option value="wrong2">Gas membara yang meluncur deras</option>
+                    </select>
+                    <select id="match-select-3" class="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-xs">
+                        <option value="">-- Pilih Definisi Abu Vulkanik --</option>
+                        <option value="wrong1">Batuan cair super panas di dapur magma</option>
+                        <option value="wrong2">Kawah berbentuk mangkuk</option>
+                        <option value="correct">Partikel debu halus hasil semburan gas bertekanan tinggi</option>
+                    </select>
+                </div>
+            `;
+        }
+
+        function selectSequenceItem(text, elem) {
+            playSound('click');
+            const idx = state.lkpdSequence.indexOf(text);
+            if (idx > -1) {
+                state.lkpdSequence.splice(idx, 1);
+            } else {
+                state.lkpdSequence.push(text);
+            }
+
+            // Refresh sequence order UI
+            document.querySelectorAll('#lkpd-sequence-container > div').forEach(div => {
+                const itemText = div.querySelector('span').innerText;
+                const orderIdx = state.lkpdSequence.indexOf(itemText);
+                const badge = div.querySelector('.badge-seq');
+                if (orderIdx > -1) {
+                    badge.innerText = `[Urutan #${orderIdx + 1}]`;
+                    div.classList.add('bg-volcano-100', 'border-volcano-500');
+                } else {
+                    badge.innerText = '';
+                    div.classList.remove('bg-volcano-100', 'border-volcano-500');
+                }
+            });
+        }
+
+        function checkLKPDAnswers() {
+            let isSeqCorrect = JSON.stringify(state.lkpdSequence) === JSON.stringify(sequenceItems);
+            let m1 = document.getElementById('match-select-1').value === 'correct';
+            let m2 = document.getElementById('match-select-2').value === 'correct';
+            let m3 = document.getElementById('match-select-3').value === 'correct';
+            
+            const caseRadios = document.getElementsByName('studi-kasus');
+            let isCaseCorrect = false;
+            for (let r of caseRadios) {
+                if (r.checked && r.value === 'correct') isCaseCorrect = true;
+            }
+
+            if (isSeqCorrect && m1 && m2 && m3 && isCaseCorrect) {
+                playSound('correct');
+                addXP(40);
+                speakText("Luar biasa! Seluruh Lembar Kerja LKPD berhasil kamu jawab dengan sempurna!");
+            } else {
+                playSound('wrong');
+                speakText("Masih ada jawaban yang kurang tepat pada LKPD. Periksa kembali urutan kronologi dan matching definisi ya!");
+            }
+        }
+
+        const quizQuestions = [
+            {
+                level: 1,
+                topic: "Struktur Gunung Api",
+                question: "Ruang raksasa di dalam perut bumi tempat menampung lelehan batuan cair super panas dinamakan...",
+                options: ["A. Dapur Magma", "B. Kawah Utama", "C. Lereng Kerucut", "D. Pipa Samping"],
+                correct: 0,
+                hint: "Ingat, tempat berkumpulnya magma dinamakan 'Dapur Magma'."
+            },
+            {
+                level: 2,
+                topic: "Material Erupsi",
+                question: "Apa perbedaan utama antara Magma dan Lava?",
+                options: [
+                    "A. Magma dingin, sedangkan Lava panas",
+                    "B. Magma di dalam perut bumi, sedangkan Lava sudah keluar di permukaan",
+                    "C. Lava berbentuk abu halus, Magma berbentuk cair",
+                    "D. Tidak ada perbedaannya"
+                ],
+                correct: 1,
+                hint: "Magma ada DI DALAM perut bumi, sedangkan saat keluar dinamakan Lava."
+            },
+            {
+                level: 3,
+                topic: "Kronologi Proses Erupsi",
+                question: "Faktor utama yang memicu terdorongnya magma naik menembus pipa kawah hingga meletus adalah...",
+                options: [
+                    "A. Hujan deras di puncak gunung",
+                    "B. Penumpukan tekanan gas yang sangat tinggi di dapur magma",
+                    "C. Angin kencang di sekitar gunung",
+                    "D. Sinar matahari yang terlalu terik"
+                ],
+                correct: 1,
+                hint: "Tekanan gas yang terperangkap membuat dorongan kuat ke atas!"
+            },
+            {
+                level: 4,
+                topic: "Dampak Kebencanaan",
+                question: "Manakah di bawah ini yang merupakan salah satu DAMPAK POSITIF dari erupsi gunung api bagi masyarakat?",
+                options: [
+                    "A. Timbulnya awan panas bahaya",
+                    "B. Hujan abu yang mengganggu udara",
+                    "C. Abu vulkanik membuat tanah di sekitarnya menjadi sangat subur",
+                    "D. Rusaknya pemukiman warga"
+                ],
+                correct: 2,
+                hint: "Abu vulkanik kaya akan unsur hara yang menyuburkan tanah pertanian."
+            },
+            {
+                level: 5,
+                topic: "Mitigasi & Siaga Bencana",
+                question: "Ketika Pusat Vulkanologi menetapkan status AWAS (🔴 Level IV) pada gunung api di daerahmu, tindakan keselamatan paling tepat adalah...",
+                options: [
+                    "A. Tetap bermain di lapangan dekat gunung",
+                    "B. Segera evakuasi mengungsi ke tempat aman sesuai instruksi petugas dengan memakai masker",
+                    "C. Menutup pintu rumah dan tidak mau pergi",
+                    "D. Memanjat puncak gunung untuk melihat awan panas"
+                ],
+                correct: 1,
+                hint: "Status AWAS berarti tingkat kritis, warga wajib segera evakuasi!"
+            }
+        ];
+
+        function renderQuizQuestion() {
+            const currentQ = quizQuestions[state.currentQuizLevel - 1];
+            document.getElementById('quiz-level-badge').innerText = `Level ${currentQ.level} / 5`;
+            document.getElementById('quiz-topic-title').innerText = `Topik: ${currentQ.topic}`;
+            document.getElementById('quiz-progress-text').innerText = `Soal ${state.currentQuizLevel} dari 5`;
+            document.getElementById('quiz-question-text').innerText = currentQ.question;
+
+            const grid = document.getElementById('quiz-options-grid');
+            grid.innerHTML = '';
+
+            currentQ.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = "p-4 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-2xl text-left text-xs sm:text-sm text-slate-200 font-medium transition flex items-center space-x-3";
+                btn.onclick = () => answerQuiz(index);
+                btn.innerHTML = `<span class="w-6 h-6 rounded-full bg-slate-700 flex items-center justify-center font-bold text-amber-400 flex-shrink-0">${index + 1}</span><span>${optText}</span>`;
+                grid.appendChild(btn);
+            });
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            speakText(currentQ.question);
+        }
+
+        function answerQuiz(selectedIndex) {
+            const currentQ = quizQuestions[state.currentQuizLevel - 1];
+            const feedbackBox = document.getElementById('quiz-feedback');
+            feedbackBox.classList.remove('hidden');
+
+            state.quizTotalAnswered++;
+
+            if (selectedIndex === currentQ.correct) {
+                playSound('correct');
+                state.quizScore++;
+                addXP(20);
+
+                feedbackBox.className = "p-4 bg-emerald-950 border border-emerald-600 text-emerald-300 rounded-2xl text-xs space-y-1 block";
+                feedbackBox.innerHTML = `<strong>Jawaban Benar! 🎉</strong> <p>Hebat sekali! Kamu berhasil menguasai ${currentQ.topic}.</p>`;
+                speakText("Jawabanmu benar sekali! Selamat!");
+
+                setTimeout(() => {
+                    if (state.currentQuizLevel < 5) {
+                        state.currentQuizLevel++;
+                        renderQuizQuestion();
+                    } else {
+                        speakText("Selamat! Kamu telah menyelesaikan seluruh level Kuis Adaptif!");
+                        navigateTo('refleksi');
+                    }
+                }, 2000);
+            } else {
+                playSound('wrong');
+                feedbackBox.className = "p-4 bg-red-950 border border-red-600 text-red-300 rounded-2xl text-xs space-y-1 block";
+                feedbackBox.innerHTML = `<strong>Hampir Tepat! 🤔</strong> <p>Petunjuk: ${currentQ.hint}</p>`;
+                speakText("Jawabanmu belum tepat. Perhatikan petunjuk lalu coba lagi!");
+            }
+        }
+
+        function selectEmojiFeel(emoji) {
+            playSound('click');
+            state.selectedEmoji = emoji;
+            document.querySelectorAll('.emoji-btn').forEach(btn => btn.classList.remove('ring-4', 'ring-amber-400', 'bg-amber-100'));
+            event.currentTarget.classList.add('ring-4', 'ring-amber-400', 'bg-amber-100');
+        }
+
+        function submitRefleksi() {
+            playSound('correct');
+            addXP(15);
+            speakText("Terima kasih sudah membagikan refleksimu! Mari lihat hasil sertifikatmu.");
+            navigateTo('sertifikat');
+        }
+
+        function updateCertificateDetails() {
+            document.getElementById('res-xp').innerText = state.xp + ' XP';
+            const accPercent = Math.round((state.quizScore / 5) * 100);
+            document.getElementById('res-accuracy').innerText = accPercent + '%';
+
+            document.getElementById('cert-student-name').innerText = state.studentName || 'Penjelajah Cilik IPAS';
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('cert-date').innerText = dateStr;
+        }
+
+        window.onload = function() {
+            initCanvas();
+            navigateTo('home');
+        };
+    </script>
+</body>
+</html>
